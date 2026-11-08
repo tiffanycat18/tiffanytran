@@ -264,7 +264,7 @@ img { display: block; max-width: 100%; }
 
 .about__info {
   width: min(790px, calc(100vw - 2 * var(--side)));
-  margin-top: clamp(80px, calc(var(--vh) * 23), 200px);   /* gap between portrait and text */
+  margin-top: clamp(64px, calc(var(--vh) * 17), 150px);   /* 150px gap like Figma */
   display: flex;
   justify-content: space-between;
   gap: 40px;
@@ -397,7 +397,7 @@ img { display: block; max-width: 100%; }
   .about__portrait { width: clamp(130px, 41vw, 170px); }
   .about__info {
     width: 100%;
-    margin-top: clamp(56px, calc(var(--vh) * 14), 140px);
+    margin-top: clamp(48px, calc(var(--vh) * 11), 110px);
     flex-direction: column;
     gap: 40px;
   }
