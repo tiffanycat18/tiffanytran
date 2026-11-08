@@ -13,8 +13,8 @@ and visit http://localhost:8000.
 | File | What it is |
 |---|---|
 | `index.html` | The page: 10 project screens, then the About section at the end |
-| `css/style.css` | All styles and breakpoints |
-| `js/main.js` | INDEX menu toggle and the ABOUT highlight |
+| `styles.css` | All styles and breakpoints |
+| `main.js` | INDEX menu toggle and the ABOUT highlight |
 | `assets/` | Put your images here |
 
 ## Swapping in real content
