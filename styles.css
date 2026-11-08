@@ -49,7 +49,7 @@
     calc((var(--vh) * 100 - var(--top) - var(--reserve)) * var(--hero-ratio))
   );
 
-  --fs-title: clamp(13px, 0.45vw + 9px, 15px);
+  --fs-title: clamp(12.5px, 0.3vw + 10.16px, 14px);
   --fs-body: clamp(11.5px, 0.3vw + 9px, 13px);
   --fs-nav: clamp(12px, 0.3vw + 11.16px, 15px);
   --fs-sub: clamp(9.5px, 0.2vw + 8.94px, 11.5px);
@@ -317,7 +317,7 @@ img { display: block; max-width: 100%; }
 @media (max-width: 767px) {
   :root {
     --edge: 16px;
-    --fs-title: 13px;
+    --fs-title: 12px;
     --fs-body: 11px;
     --fs-nav: 14px;
     --fs-sub: 9px;
@@ -410,7 +410,7 @@ img { display: block; max-width: 100%; }
 @media (min-width: 430px) and (max-width: 767px) {
   :root {
     --edge: 20px;
-    --fs-title: 14px;
+    --fs-title: 13px;
     --fs-body: 12px;
     --fs-nav: 15px;
     --fs-sub: 9.5px;
@@ -427,7 +427,7 @@ img { display: block; max-width: 100%; }
 @media (max-width: 379px) {
   :root {
     --edge: 12px;
-    --fs-title: 12px;
+    --fs-title: 11.5px;
     --fs-body: 10.5px;
     --fs-nav: 13px;
     --bar: 68px;
