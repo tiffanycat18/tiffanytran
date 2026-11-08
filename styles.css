@@ -34,7 +34,7 @@
   /* side gutter for fixed UI (46px in the 1280 frame) */
   --edge: clamp(16px, 3.6vw, 46px);
   /* horizontal room reserved for ABOUT / INDEX beside the hero */
-  --side: calc(var(--edge) + 110px);
+  --side: calc(var(--edge) + 115px);
 
   /* space above the hero (216px in the 1080-tall frame) */
   --top: clamp(84px, calc(var(--vh) * 36 - 173px), 216px);
@@ -51,8 +51,8 @@
 
   --fs-title: clamp(13px, 0.45vw + 9px, 15px);
   --fs-body: clamp(11.5px, 0.3vw + 9px, 13px);
-  --fs-nav: clamp(11px, 0.25vw + 9px, 13px);
-  --fs-sub: clamp(8.5px, 0.15vw + 7.5px, 10px);
+  --fs-nav: clamp(12px, 0.3vw + 11.16px, 15px);
+  --fs-sub: clamp(9.5px, 0.2vw + 8.94px, 11.5px);
   --fs-foot: clamp(10px, 0.2vw + 8px, 11px);
 }
 
@@ -143,6 +143,8 @@ img { display: block; max-width: 100%; }
   font-family: var(--mono);
   font-size: var(--fs-nav);
   line-height: 16px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
   text-decoration: none;
   color: var(--ink);
 }
@@ -151,14 +153,14 @@ img { display: block; max-width: 100%; }
   position: fixed;
   z-index: 30;
   left: var(--edge);
-  top: calc(50% - 8px);
+  top: calc(50% - 9px);
 }
 
 .nav-index {
   position: fixed;
   z-index: 30;
   right: var(--edge);
-  top: calc(50% - 8px);
+  top: calc(50% - 9px);
   min-width: 86px;
 }
 
@@ -248,9 +250,10 @@ img { display: block; max-width: 100%; }
 /* ---------- About (end of page) ---------- */
 .about {
   min-height: calc(var(--vh) * 100);
-  padding: clamp(80px, calc(var(--vh) * 29.5), 319px) 0 80px;
+  padding: 80px 0;              /* equal space above and below */
   display: flex;
   flex-direction: column;
+  justify-content: center;      /* centre the portrait + text vertically */
   align-items: center;
 }
 
@@ -262,7 +265,7 @@ img { display: block; max-width: 100%; }
 
 .about__info {
   width: min(790px, calc(100vw - 2 * var(--side)));
-  margin-top: clamp(48px, calc(var(--vh) * 15), 162px);
+  margin-top: clamp(48px, calc(var(--vh) * 10), 110px);
   display: flex;
   justify-content: space-between;
   gap: 40px;
@@ -305,7 +308,7 @@ img { display: block; max-width: 100%; }
 @media (min-width: 768px) and (max-width: 1279px) and (orientation: portrait) {
   :root {
     --hero-max: 80vw;
-    --side: calc(var(--edge) + 92px);
+    --side: calc(var(--edge) + 104px);
   }
 }
 
@@ -317,8 +320,8 @@ img { display: block; max-width: 100%; }
     --edge: 16px;
     --fs-title: 13px;
     --fs-body: 11px;
-    --fs-nav: 13px;
-    --fs-sub: 8px;
+    --fs-nav: 14px;
+    --fs-sub: 9px;
     --fs-foot: 9px;
     --bar: 76px;            /* height of the fixed top bar */
   }
@@ -410,8 +413,8 @@ img { display: block; max-width: 100%; }
     --edge: 20px;
     --fs-title: 14px;
     --fs-body: 12px;
-    --fs-nav: 14px;
-    --fs-sub: 8.5px;
+    --fs-nav: 15px;
+    --fs-sub: 9.5px;
   }
 }
 
@@ -427,7 +430,7 @@ img { display: block; max-width: 100%; }
     --edge: 12px;
     --fs-title: 12px;
     --fs-body: 10.5px;
-    --fs-nav: 12px;
+    --fs-nav: 13px;
     --bar: 68px;
   }
   .signature__img { height: 32px; }
