@@ -139,7 +139,7 @@ img { display: block; max-width: 100%; }
 /* ---------- Fixed navigation ---------- */
 .nav-about,
 .nav-index__toggle {
-  font-family: var(--mono);
+  font-family: "ABC Diatype Regular", Helvetica, Arial, sans-serif;
   font-size: var(--fs-nav);
   line-height: 16px;
   text-transform: uppercase;
