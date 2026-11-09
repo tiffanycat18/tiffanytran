@@ -52,7 +52,7 @@
   --fs-title: clamp(12.5px, 0.3vw + 10.16px, 14px);
   --fs-body: clamp(11.5px, 0.3vw + 9px, 13px);
   --fs-nav: clamp(12px, 0.3vw + 11.16px, 15px);
-  --fs-sub: clamp(9.5px, 0.2vw + 8.94px, 11.5px);
+  --fs-sub: clamp(11px, 0.25vw + 10.3px, 13.5px);
   --fs-foot: clamp(10px, 0.2vw + 8px, 11px);
 }
 
@@ -319,7 +319,7 @@ img { display: block; max-width: 100%; }
     --fs-title: 12px;
     --fs-body: 11px;
     --fs-nav: 14px;
-    --fs-sub: 9px;
+    --fs-sub: 12px;
     --fs-foot: 9px;
     --bar: 76px;            /* height of the fixed top bar */
   }
@@ -412,7 +412,7 @@ img { display: block; max-width: 100%; }
     --fs-title: 13px;
     --fs-body: 12px;
     --fs-nav: 15px;
-    --fs-sub: 9.5px;
+    --fs-sub: 13px;
   }
 }
 
@@ -429,6 +429,7 @@ img { display: block; max-width: 100%; }
     --fs-title: 11.5px;
     --fs-body: 10.5px;
     --fs-nav: 13px;
+    --fs-sub: 11px;
     --bar: 68px;
   }
   .signature__img { height: 32px; }
