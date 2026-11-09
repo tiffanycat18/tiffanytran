@@ -117,7 +117,7 @@ img { display: block; max-width: 100%; }
 .signature {
   position: fixed;
   z-index: 30;
-  right: 0;
+  right: calc(var(--edge) - 10px);  /* same gap as the © line on the left (image has ~10px of empty edge) */
   bottom: 0;
   display: block;
   color: var(--ink);
