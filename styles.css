@@ -113,13 +113,12 @@ img { display: block; max-width: 100%; }
   object-fit: cover;
 }
 
-/* ---------- Signature (static on desktop / tablet) ---------- */
+/* ---------- Signature (fixed bottom-right on desktop / tablet) ---------- */
 .signature {
-  position: absolute;
+  position: fixed;
   z-index: 30;
-  top: calc(var(--top) / 2);
-  left: 50%;
-  transform: translate(-50%, -50%);
+  right: 0;
+  bottom: 0;
   display: block;
   color: var(--ink);
   text-decoration: none;
@@ -337,12 +336,12 @@ img { display: block; max-width: 100%; }
     background: var(--bg);
   }
 
-  /* Signature becomes fixed, top-left */
+  /* Signature moves to the top-left on phones */
   .signature {
-    position: fixed;
     top: calc(18px + env(safe-area-inset-top));
     left: var(--edge);
-    transform: none;
+    right: auto;
+    bottom: auto;
   }
   .signature__img { height: 36px; }
   .signature__text { font-size: 28px; }
@@ -446,9 +445,6 @@ img { display: block; max-width: 100%; }
 }
 
 /* ===== Signature: matches Figma (143.87 × 65.23, rotated -4.95°) ===== */
-.signature {
-  top: calc(var(--top) * 0.75);   /* 216 × 0.66 ≈ 141px at 1280 × 1080, like Figma */
-}
 .signature__img {
   width: clamp(104px, 11.24vw, 143.87px);   /* exactly 143.87px at 1280 wide, smaller on tablets */
   height: auto;
