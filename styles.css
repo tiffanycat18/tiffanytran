@@ -83,7 +83,7 @@
   --fs-nav: clamp(12px, 0.3vw + 11.16px, 15px);
   --fs-sub: clamp(11px, 0.25vw + 10.3px, 13.5px);
   --fs-foot: clamp(10px, 0.2vw + 8px, 11px);
-  --fs-caption: clamp(9.5px, 0.15vw + 8.6px, 11px);     /* image labels */
+  --fs-caption: clamp(8.5px, 0.1vw + 8.22px, 9.5px);    /* image labels */
   --caption-font: "Akkurat Mono", Menlo, Consolas, monospace;   /* change to any font you like */
 }
 
@@ -302,6 +302,7 @@ img { display: block; max-width: 100%; }
   text-align: center;
   max-width: 270px;
   margin-top: clamp(14px, calc(var(--vh) * 2.6), 30px);
+  margin-bottom: clamp(8px, calc(var(--vh) * 1.5), 16px);   /* extra space before the project text */
 }
 /* When an image has a label, shrink the image a little so the project still fits on one screen */
 .project__media:has(.project__caption) img {
@@ -476,7 +477,8 @@ img { display: block; max-width: 100%; }
   .project__inner { width: 100%; }
   .project__media { aspect-ratio: 1.75; }   /* placeholder box: 344 × 197 */
   .project__media:has(img) { aspect-ratio: auto; }
-  .project__caption { max-width: 240px; margin-top: 12px; }
+  .project__caption { max-width: 220px; margin-top: 12px; margin-bottom: 10px; }
+  :root { --fs-caption: 8.5px; }
   :root { --media-max-h: calc(var(--vh) * 55); }   /* tall images stop at 55% of the screen */
   .project__info {
     grid-template-columns: 44% 1fr;
