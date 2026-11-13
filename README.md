@@ -21,7 +21,7 @@ and visit http://localhost:8000.
 
 - **Signature:** save the handwritten signature as `assets/signature.png`, ideally a transparent PNG. Until that file exists, a cursive font shows "Tiffany Tran" in its place.
 - **Project images:** in each `<figure class="project__media placeholder">`, replace the `<span>` with
-  `<img src="assets/project-01.jpg" alt="…">`. The image fills and crops to the frame automatically.
+  `<img src="assets/project-01.jpg" alt="…">`. Images keep their original shape and are never cropped; export them with the long side around 2000px.
 - **Portrait:** do the same inside `<figure class="about__portrait placeholder">`.
 - **Text:** edit "Project Name", "2047" and the description in each `<section class="project">`.
 - **Instagram:** change `href="https://www.instagram.com/"` in the About section to your profile URL.

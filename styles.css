@@ -48,6 +48,8 @@
     calc(100vw - 2 * var(--side)),
     calc((var(--vh) * 100 - var(--top) - var(--reserve)) * var(--hero-ratio))
   );
+  /* tallest a project image can be: the height of the 3:2 box */
+  --media-max-h: calc(var(--hero-w) / var(--hero-ratio));
 
   --fs-title: clamp(12.5px, 0.3vw + 10.16px, 14px);
   --fs-body: clamp(11.5px, 0.3vw + 9px, 13px);
@@ -105,8 +107,6 @@ img { display: block; max-width: 100%; }
   letter-spacing: .2em;
   text-transform: uppercase;
 }
-.placeholder img,
-.project__media img,
 .about__portrait img {
   width: 100%;
   height: 100%;
@@ -225,7 +225,23 @@ img { display: block; max-width: 100%; }
 
 .project__media {
   width: 100%;
-  aspect-ratio: var(--hero-ratio);
+  aspect-ratio: var(--hero-ratio);   /* grey placeholder box (938 × 608 at 1280) */
+}
+
+/* Real images keep their original shape — nothing is cropped.
+   They're as big as possible without going wider than the box above
+   or taller than it, so every project still fits on one screen. */
+.project__media:has(img) {
+  aspect-ratio: auto;
+  background: none;
+  display: flex;
+  justify-content: center;
+}
+.project__media img {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: var(--media-max-h);
 }
 
 .project__info {
@@ -381,7 +397,9 @@ img { display: block; max-width: 100%; }
     padding: calc(var(--bar) + 24px) var(--edge) 56px;
   }
   .project__inner { width: 100%; }
-  .project__media { aspect-ratio: 1.75; }   /* 344 × 197 */
+  .project__media { aspect-ratio: 1.75; }   /* placeholder box: 344 × 197 */
+  .project__media:has(img) { aspect-ratio: auto; }
+  :root { --media-max-h: calc(var(--vh) * 55); }   /* tall images stop at 55% of the screen */
   .project__info {
     grid-template-columns: 44% 1fr;
     column-gap: 12px;
