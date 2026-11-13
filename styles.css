@@ -26,6 +26,26 @@
   src: url("fonts/ABCDiatype-Heavy.otf") format("opentype");
 }
 
+@font-face {
+  font-family: "ABC Diatype Mono Regular Italic";
+  font-style: normal;
+  font-weight: normal;
+  src: url("fonts/ABCDiatypeMono-RegularItalic.otf") format("opentype");
+}
+
+@font-face {
+  font-family: "Akkurat";
+  font-style: normal;
+  font-weight: normal;
+  src: url("fonts/Akkurat.ttf") format("opentype");
+}
+
+@font-face {
+  font-family: "Akkurat Mono";
+  font-style: normal;
+  font-weight: normal;
+  src: url("fonts/AkkuratMono-Regular.ttf") format("opentype");
+}
 
 :root {
   --ink: #111;
@@ -34,7 +54,6 @@
 
   --sans: "ABC Diatype Medium", Helvetica, Arial, sans-serif;
   --mono: "TAYBigBird", monospace;
-  --script: "Pinyon Script", "Snell Roundhand", cursive;
 
   /* viewport height unit — small-viewport height where supported */
   --vh: 1vh;
@@ -65,7 +84,7 @@
   --fs-sub: clamp(11px, 0.25vw + 10.3px, 13.5px);
   --fs-foot: clamp(10px, 0.2vw + 8px, 11px);
   --fs-caption: clamp(9.5px, 0.15vw + 8.6px, 11px);     /* image labels */
-  --caption-font: ui-monospace, "SF Mono", Menlo, Consolas, monospace;   /* change to any font you like */
+  --caption-font: "Akkurat Mono", Menlo, Consolas, monospace;   /* change to any font you like */
 }
 
 @supports (height: 100svh) {
