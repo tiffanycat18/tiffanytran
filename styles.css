@@ -136,6 +136,22 @@ img { display: block; max-width: 100%; }
 }
 .signature.no-img .signature__text { display: inline; }
 
+/* ---------- Logo (top centre on desktop / tablet, scrolls away) ---------- */
+/* Figma: 60 × 80, top 107px, ending ~29px above the image (1280 × 1080 frame) */
+.logo {
+  --logo-h: clamp(36px, calc(var(--top) * 0.45), 80px);
+  position: absolute;
+  z-index: 30;
+  top: calc(var(--top) * 0.866 - var(--logo-h));
+  left: 50%;
+  transform: translateX(-50%);
+  display: block;
+}
+.logo__img {
+  height: var(--logo-h);
+  width: auto;
+}
+
 /* ---------- Fixed navigation ---------- */
 .nav-about,
 .nav-index__toggle {
@@ -362,6 +378,17 @@ img { display: block; max-width: 100%; }
   .signature__img { height: 36px; }
   .signature__text { font-size: 28px; }
 
+  /* Logo moves to a fixed spot in the bottom-right corner on phones */
+  .logo {
+    --logo-h: 64px;
+    position: fixed;
+    top: auto;
+    left: auto;
+    right: calc(var(--edge) - 8px);
+    bottom: env(safe-area-inset-bottom);
+    transform: none;
+  }
+
   /* ABOUT / INDEX stacked at top-right */
   .site-nav {
     position: fixed;
@@ -442,6 +469,7 @@ img { display: block; max-width: 100%; }
 
 /* Small phones (iPhone SE, mini, older Androids) */
 @media (max-width: 379px) {
+  .logo { --logo-h: 52px; }
   :root {
     --edge: 12px;
     --fs-title: 11.5px;
