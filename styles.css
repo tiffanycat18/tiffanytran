@@ -283,10 +283,14 @@ img { display: block; max-width: 100%; }
   line-height: 1.25;
 }
 
+/* Short italic question under a project title (e.g. Interlinked Photobooth) */
 .project__question {
-  font-family: "ABC Diatype Heavy", Helvetica, Arial, sans-serif;
+  font-family: "ABC Diatype Regular", Helvetica, Arial, sans-serif;
+  font-style: italic;
   font-size: var(--fs-title);
   line-height: 1.25;
+  max-width: 390px;
+  margin-top: 1.6em;
 }
 
 .project__desc { font-size: var(--fs-body); }
