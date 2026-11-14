@@ -97,7 +97,7 @@
   --fs-nav: clamp(12px, 0.3vw + 11.16px, 15px);
   --fs-sub: clamp(11px, 0.25vw + 10.3px, 13.5px);
   --fs-foot: clamp(10px, 0.2vw + 8px, 11px);
-  --fs-caption: clamp(8.5px, 0.1vw + 8.22px, 9.5px);    /* image labels */
+  --fs-caption: clamp(10px, 0.12vw + 9.46px, 11px);    /* image labels: 11px at 1280+ */
   --caption-font: "ABC Monument Grotesk Mono Light", Menlo, Consolas, monospace;   
 }
 
@@ -156,13 +156,12 @@ img { display: block; max-width: 100%; }
   object-fit: cover;
 }
 
-/* ---------- Signature (top centre on desktop / tablet, scrolls away) ---------- */
+/* ---------- Signature (fixed bottom-right on desktop / tablet) ---------- */
 .signature {
-  position: absolute;
+  position: fixed;
   z-index: 30;
-  top: calc(var(--top) * 0.653);   /* middle of the signature 141px from the top at 1280 × 1080, like Figma */
-  left: 50%;
-  transform: translate(-50%, -50%);
+  right: calc(var(--edge) - 10px);  /* same gap as the © line on the left (image has ~10px of empty edge) */
+  bottom: 0;
   display: block;
   color: var(--ink);
   text-decoration: none;
@@ -305,18 +304,19 @@ img { display: block; max-width: 100%; }
   max-height: var(--media-max-h);
 }
 
-/* Optional small label under a project image:
-   <figcaption class="project__caption">…</figcaption> inside the <figure> */
+/* Optional small label for a project:
+   <p class="project__caption">…</p> inside the project's <figure>.
+   main.js shows it under the project title on desktop / tablet,
+   and centred under the image on phones. */
 .project__caption {
   font-family: var(--caption-font);
   color: var(--ink);
   font-size: var(--fs-caption);
   word-spacing: -0.08em;
   line-height: 1.3;
-  text-align: center;
-  max-width: 270px;
-  margin-top: clamp(14px, calc(var(--vh) * 2.6), 30px);
-  margin-bottom: clamp(8px, calc(var(--vh) * 1.5), 16px);   /* extra space before the project text */
+  text-align: left;
+  max-width: 260px;
+  margin-top: 2.4em;   /* space under the project title */
 }
 /* When an image has a label, shrink the image a little so the project still fits on one screen */
 .project__media:has(.project__caption) img {
@@ -390,7 +390,6 @@ img { display: block; max-width: 100%; }
       calc((var(--vh) * 100 - var(--top) - 36px) * var(--hero-ratio))
     );
   }
-  .signature { top: calc(var(--top) * 0.5); }   /* keep it clear of the image on very short screens */
   .signature__img { height: 30px; }
   .signature__text { font-size: 26px; }
   .copyright { padding: 2px 4px 2px 0; background: var(--bg); }
@@ -435,10 +434,10 @@ img { display: block; max-width: 100%; }
 
   /* Signature is fixed in the top-left on phones */
   .signature {
-    position: fixed;
     top: calc(18px + env(safe-area-inset-top));
     left: var(--edge);
-    transform: none;
+    right: auto;
+    bottom: auto;
   }
   .signature__img { height: 36px; }
   .signature__text { font-size: 28px; }
@@ -491,8 +490,8 @@ img { display: block; max-width: 100%; }
   .project__inner { width: 100%; }
   .project__media { aspect-ratio: 1.75; }   /* placeholder box: 344 × 197 */
   .project__media:has(img) { aspect-ratio: auto; }
-  .project__caption { max-width: 220px; margin-top: 12px; margin-bottom: 10px; }
-  :root { --fs-caption: 8.5px; }
+  .project__caption { text-align: center; max-width: 240px; margin-top: 12px; margin-bottom: 10px; }   /* centred under the image */
+  :root { --fs-caption: 10px; }
   :root { --media-max-h: calc(var(--vh) * 55); }   /* tall images stop at 55% of the screen */
   .project__info {
     grid-template-columns: 44% 1fr;

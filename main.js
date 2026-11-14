@@ -39,6 +39,33 @@
     setOpen(false);
   });
 
+  /* ---------- Project captions ----------
+     Write a caption once, inside the project's <figure>:
+       <p class="project__caption">…</p>
+     Desktop / tablet: it's moved under the project title (left column).
+     Phones: it stays centred under the image. */
+  var phone = window.matchMedia('(max-width: 767px)');
+  function placeCaptions() {
+    document.querySelectorAll('.project').forEach(function (project) {
+      var caption = project.querySelector('.project__caption');
+      if (!caption) return;
+      var figure = project.querySelector('.project__media');
+      var title = project.querySelector('.project__title');
+      var left = project.querySelector('.project__left');
+      if (!left && title) {               // wrap the title so the caption can sit under it
+        left = document.createElement('div');
+        left.className = 'project__left';
+        title.parentNode.insertBefore(left, title);
+        left.appendChild(title);
+      }
+      if (phone.matches) figure.appendChild(caption);
+      else if (left) left.appendChild(caption);
+    });
+  }
+  placeCaptions();
+  if (phone.addEventListener) phone.addEventListener('change', placeCaptions);
+  else if (phone.addListener) phone.addListener(placeCaptions);
+
   /* ---------- Underline ABOUT while the About section is in view ---------- */
   var about = document.getElementById('about');
   var aboutLink = document.querySelector('.nav-about');
