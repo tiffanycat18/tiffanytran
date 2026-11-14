@@ -62,9 +62,46 @@
       else if (left) left.appendChild(caption);
     });
   }
-  placeCaptions();
-  if (phone.addEventListener) phone.addEventListener('change', placeCaptions);
-  else if (phone.addListener) phone.addListener(placeCaptions);
+  /* Desktop / tablet: snap each caption's first line onto the 4th line of
+     the right-hand column (a shared baseline grid), however the text wraps.
+     If a long title would touch it, it drops to the next line of the grid. */
+  var CAPTION_LINE = 4;
+  function baselineOf(el) {
+    var mark = document.createElement('span');
+    mark.style.cssText = 'display:inline-block;width:0;height:0;vertical-align:baseline';
+    el.insertBefore(mark, el.firstChild);
+    var y = mark.getBoundingClientRect().top;
+    mark.remove();
+    return y;
+  }
+  function alignCaptions() {
+    document.querySelectorAll('.project').forEach(function (project) {
+      var caption = project.querySelector('.project__caption');
+      if (!caption) return;
+      caption.style.transform = '';
+      if (phone.matches) return;
+      var sub = project.querySelector('.project__sub');
+      var title = project.querySelector('.project__title');
+      if (!sub) return;
+      var line = parseFloat(getComputedStyle(sub).lineHeight);
+      var target = baselineOf(sub) + (CAPTION_LINE - 1) * line;
+      var now = baselineOf(caption);
+      var top = caption.getBoundingClientRect().top;
+      if (title) {
+        var clear = title.getBoundingClientRect().bottom + line * 0.5;
+        while (top + (target - now) < clear) target += line;
+      }
+      caption.style.transform = 'translateY(' + (target - now) + 'px)';
+    });
+  }
+  function layoutCaptions() { placeCaptions(); alignCaptions(); }
+
+  layoutCaptions();
+  if (phone.addEventListener) phone.addEventListener('change', layoutCaptions);
+  else if (phone.addListener) phone.addListener(layoutCaptions);
+  window.addEventListener('resize', alignCaptions);
+  window.addEventListener('load', alignCaptions);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(alignCaptions);
 
   /* ---------- Underline ABOUT while the About section is in view ---------- */
   var about = document.getElementById('about');
