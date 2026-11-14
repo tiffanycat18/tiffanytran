@@ -78,7 +78,7 @@
   --side: calc(var(--edge) + 115px);
 
   /* space above the project image (150px on a 1080-tall screen, ~100px on a laptop) */
-  --top: clamp(70px, calc(var(--vh) * 22 - 88px), 150px);
+  --top: clamp(56px, calc(var(--vh) * 16 - 70px), 110px);
   /* space below the image: gap + the longest project text (~230px) + bottom padding */
   --reserve: calc(var(--info-gap) + 270px);
 
@@ -90,7 +90,7 @@
     calc((var(--vh) * 100 - var(--top) - var(--reserve)) * var(--hero-ratio))
   );
   /* project text block: wider than the image (up to 880px) so text wraps less */
-  --info-w: min(calc(100vw - 2 * var(--side)), max(var(--hero-w), 880px));
+  --info-w: min(calc(100vw - 2 * var(--side)), clamp(880px, 62vw, 1100px));
   /* tallest a project image can be: the height of the 3:2 box */
   --media-max-h: calc(var(--hero-w) / var(--hero-ratio));
 
@@ -400,6 +400,37 @@ img { display: block; max-width: 100%; }
 .about__muted { color: var(--muted); }
 .about__label { margin-bottom: 1.5em; }
 .about__based { margin-top: 3em; }
+
+/* =========================================================
+   Desktop / tablet: one project per screen, image and text share
+   the same column edges. Each project is exactly one screen tall;
+   the text takes the height it needs and the image fills the rest,
+   up to the full width of the text block. Wide images therefore line
+   up with the text on both sides.
+   ========================================================= */
+@media (min-width: 768px) and (min-height: 601px) {
+  .project { height: calc(var(--vh) * 100); }
+  .project__inner {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .project__media {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    aspect-ratio: auto;            /* grey placeholders fill the space too */
+  }
+  .project__media img {
+    max-width: 100%;
+    max-height: 100%;
+    min-height: 0;
+  }
+  .project__media:has(.project__caption) img {
+    max-height: calc(100% - var(--cap-gap-top) - 3.9 * var(--fs-caption));
+  }
+  .project__info { flex: none; }
+}
 
 /* =========================================================
    Short landscape screens (e.g. phones / small laptops held
