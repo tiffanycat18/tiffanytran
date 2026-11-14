@@ -77,10 +77,10 @@
   /* horizontal room reserved for ABOUT / INDEX beside the hero */
   --side: calc(var(--edge) + 115px);
 
-  /* space above the hero (216px in the 1080-tall frame) */
-  --top: clamp(84px, calc(var(--vh) * 36 - 173px), 216px);
-  /* space below the hero for the text row + footer (256px in the frame) */
-  --reserve: 284px;
+  /* space above the project image (150px on a 1080-tall screen, ~100px on a laptop) */
+  --top: clamp(70px, calc(var(--vh) * 22 - 88px), 150px);
+  /* space below the image: gap + the longest project text (~230px) + bottom padding */
+  --reserve: calc(var(--info-gap) + 270px);
 
   --hero-ratio: 1.543;          /* 938 × 608 */
   --hero-max: 73.3vw;           /* 938 / 1280 */
@@ -89,15 +89,17 @@
     calc(100vw - 2 * var(--side)),
     calc((var(--vh) * 100 - var(--top) - var(--reserve)) * var(--hero-ratio))
   );
+  /* project text block: wider than the image (up to 880px) so text wraps less */
+  --info-w: min(calc(100vw - 2 * var(--side)), max(var(--hero-w), 880px));
   /* tallest a project image can be: the height of the 3:2 box */
   --media-max-h: calc(var(--hero-w) / var(--hero-ratio));
 
-  --fs-title: clamp(12.5px, 0.3vw + 10.16px, 14px);
-  --fs-body: clamp(11.5px, 0.3vw + 9px, 13px);
+  --fs-title: clamp(14px, 0.4vw + 10.88px, 16px);       /* project title: 16px at 1280+ */
+  --fs-body: clamp(13px, 0.3vw + 10.66px, 14.5px);      /* project text: 14.5px at 1280+ */
   --fs-nav: clamp(12px, 0.3vw + 11.16px, 15px);
   --fs-sub: clamp(11px, 0.25vw + 10.3px, 13.5px);
   --fs-foot: clamp(10px, 0.2vw + 8px, 11px);
-  --fs-caption: clamp(9.5px, 0.08vw + 8.98px, 10px);    /* image labels: 10px at 1280+ */
+  --fs-caption: clamp(10px, 0.08vw + 9.48px, 10.5px);   /* image labels: 10.5px at 1280+ */
   --info-gap: clamp(24px, calc(var(--vh) * 5.4), 58px);        /* image → project text (no label) */
   --cap-gap-top: clamp(10px, calc(var(--vh) * 1.6), 18px);     /* image → label */
   --cap-gap-bottom: clamp(28px, calc(var(--vh) * 5.2), 56px);  /* label → project text */
@@ -276,17 +278,18 @@ img { display: block; max-width: 100%; }
 /* ---------- Project screens ---------- */
 .project {
   min-height: calc(var(--vh) * 100);
-  padding: var(--top) 0 48px;
+  padding: var(--top) 0 36px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
-.project__inner { width: var(--hero-w); }
+.project__inner { width: var(--info-w); }
 
 .project__media {
-  width: 100%;
+  width: var(--hero-w);
+  margin: 0 auto;
   aspect-ratio: var(--hero-ratio);   /* grey placeholder box (938 × 608 at 1280) */
 }
 
@@ -330,7 +333,7 @@ img { display: block; max-width: 100%; }
 
 .project__info {
   display: grid;
-  grid-template-columns: 1fr minmax(280px, 36%);
+  grid-template-columns: 1fr minmax(300px, 48%);
   column-gap: 24px;
   align-items: baseline;   /* items in the same row share a baseline */
   margin-top: var(--info-gap);
@@ -433,8 +436,8 @@ img { display: block; max-width: 100%; }
 @media (max-width: 767px) {
   :root {
     --edge: 16px;
-    --fs-title: 12px;
-    --fs-body: 11px;
+    --fs-title: 13px;
+    --fs-body: 12px;
     --fs-nav: 14px;
     --fs-sub: 12px;
     --fs-foot: 9px;
@@ -509,10 +512,10 @@ img { display: block; max-width: 100%; }
     padding: calc(var(--bar) + 24px) var(--edge) 56px;
   }
   .project__inner { width: 100%; }
-  .project__media { aspect-ratio: 1.75; }   /* placeholder box: 344 × 197 */
+  .project__media { width: 100%; aspect-ratio: 1.75; }   /* placeholder box: 344 × 197 */
   .project__media:has(img) { aspect-ratio: auto; }
   .project__caption { max-width: 240px; }
-  :root { --fs-caption: 9.5px; --info-gap: 20px; --cap-gap-top: 10px; --cap-gap-bottom: 20px; }
+  :root { --fs-caption: 10px; --info-gap: 20px; --cap-gap-top: 10px; --cap-gap-bottom: 20px; }
   :root { --media-max-h: calc(var(--vh) * 55); }   /* tall images stop at 55% of the screen */
   .project__info {
     grid-template-columns: 44% 1fr;
@@ -540,8 +543,8 @@ img { display: block; max-width: 100%; }
 @media (min-width: 430px) and (max-width: 767px) {
   :root {
     --edge: 20px;
-    --fs-title: 13px;
-    --fs-body: 12px;
+    --fs-title: 14px;
+    --fs-body: 13px;
     --fs-nav: 15px;
     --fs-sub: 13px;
   }
@@ -558,8 +561,8 @@ img { display: block; max-width: 100%; }
   .logo { --logo-h: 52px; }
   :root {
     --edge: 12px;
-    --fs-title: 11.5px;
-    --fs-body: 10.5px;
+    --fs-title: 12.5px;
+    --fs-body: 11.5px;
     --fs-nav: 13px;
     --fs-sub: 11px;
     --bar: 68px;
