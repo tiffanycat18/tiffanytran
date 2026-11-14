@@ -98,7 +98,7 @@
   --fs-sub: clamp(11px, 0.25vw + 10.3px, 13.5px);
   --fs-foot: clamp(10px, 0.2vw + 8px, 11px);
   --fs-caption: clamp(10px, 0.12vw + 9.46px, 11px);    /* image labels: 11px at 1280+ */
-  --caption-font: "ABC Monument Grotesk Mono Light", Menlo, Consolas, monospace;   
+  --caption-font: Menlo, Lucida Console, monospace, sans-serif;   
 }
 
 @supports (height: 100svh) {
