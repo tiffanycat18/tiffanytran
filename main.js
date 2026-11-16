@@ -75,10 +75,6 @@
   // Desktop / tablet layout: the stage height comes from CSS (fills the screen)
   var fillLayout = window.matchMedia('(min-width: 768px) and (min-height: 601px)');
 
-  function keyboardFocusInside(el) {
-    try { return !!el.querySelector(':focus-visible'); } catch (e) { return false; }
-  }
-
   function Carousel(fig) {
     var stage = fig.querySelector('.carousel__stage');
     var project = fig.closest('.project') || fig;
@@ -89,7 +85,6 @@
     var index = 0;
     var timer = null;
     var inView = false;
-    var focusPaused = false;
     var numEl = null;
 
     /* ---------- build slides ---------- */
@@ -113,8 +108,6 @@
 
     stage.setAttribute('aria-roledescription', 'carousel');
     if (n > 1) {
-      stage.tabIndex = 0;
-      stage.setAttribute('aria-label', 'Slideshow. Use the arrow keys to change the picture.');
       var count = document.createElement('p');
       count.className = 'carousel__count';
       count.setAttribute('aria-hidden', 'true');
@@ -159,7 +152,7 @@
     function videoOf(slide) { return slide.classList.contains('carousel__slide--video') ? slide.querySelector('video') : null; }
 
     function running() {
-      return inView && !document.hidden && !focusPaused && !reduceMotion && n > 1;
+      return inView && !document.hidden && !reduceMotion && n > 1;
     }
 
     function schedule(arriving) {
@@ -286,18 +279,6 @@
       });
     }
 
-    stage.addEventListener('keydown', function (e) {
-      if (e.key === 'ArrowRight') { e.preventDefault(); go(index + 1, true); }
-      else if (e.key === 'ArrowLeft') { e.preventDefault(); go(index - 1, true); }
-    });
-
-    // Hold still while someone moves through it with the keyboard
-    fig.addEventListener('focusin', function () {
-      if (keyboardFocusInside(fig)) { focusPaused = true; clearTimeout(timer); }
-    });
-    fig.addEventListener('focusout', function (e) {
-      if (!fig.contains(e.relatedTarget) && focusPaused) { focusPaused = false; schedule(false); }
-    });
 
     /* ---------- only play what's on screen ---------- */
     function setInView(v) {
@@ -320,6 +301,8 @@
       else if (inView) { if (vid) playVideo(vid); schedule(false); }
     };
     this.fit = fit;
+    this.go = function (step) { go(index + step, true); };
+    this.isInView = function () { return inView; };
     this.stage = stage;
 
     fit();
@@ -351,6 +334,16 @@
   } else {
     carousels.forEach(function (c) { c.setInView(true); });
   }
+
+  // ← / → keys change the slideshow that's on screen
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    if (e.altKey || e.ctrlKey || e.metaKey || e.target.closest('input, textarea, select')) return;
+    var c = carousels.filter(function (c) { return c.isInView(); })[0];
+    if (!c) return;
+    e.preventDefault();
+    c.go(e.key === 'ArrowRight' ? 1 : -1);
+  });
 
   document.addEventListener('visibilitychange', function () {
     carousels.forEach(function (c) { c.onVisibility(); });

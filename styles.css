@@ -318,7 +318,6 @@ img { display: block; max-width: 100%; }
   outline: none;
 }
 .carousel__stage.is-sized { aspect-ratio: auto; }
-.carousel__stage:focus-visible { outline: 1px solid var(--ink); outline-offset: 6px; }
 
 .carousel__slide {
   position: absolute;
@@ -357,12 +356,12 @@ img { display: block; max-width: 100%; }
 }
 .carousel__stage > .placeholder { position: absolute; }
 
-/* ---- ← / → arrow cursor over the picture (desktop) ---- */
+/* ---- ← / → arrow cursor over the picture (desktop): small hairline arrows ---- */
 .carousel__stage.is-prev .carousel__slide.is-active {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M25 16H7M14 9l-7 7 7 7' stroke='%23fff' stroke-width='4'/%3E%3Cpath d='M25 16H7M14 9l-7 7 7 7' stroke='%23111' stroke-width='1.5'/%3E%3C/g%3E%3C/svg%3E") 16 16, w-resize;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17.5 11H4.5M8.5 7L4.5 11L8.5 15' stroke='%23fff' stroke-opacity='.5' stroke-width='2.2'/%3E%3Cpath d='M17.5 11H4.5M8.5 7L4.5 11L8.5 15' stroke='%231a1a1a' stroke-width='.9'/%3E%3C/g%3E%3C/svg%3E") 11 11, w-resize;
 }
 .carousel__stage.is-next .carousel__slide.is-active {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 16h18M18 9l7 7-7 7' stroke='%23fff' stroke-width='4'/%3E%3Cpath d='M7 16h18M18 9l7 7-7 7' stroke='%23111' stroke-width='1.5'/%3E%3C/g%3E%3C/svg%3E") 16 16, e-resize;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 11H17.5M13.5 7L17.5 11L13.5 15' stroke='%23fff' stroke-opacity='.5' stroke-width='2.2'/%3E%3Cpath d='M4.5 11H17.5M13.5 7L17.5 11L13.5 15' stroke='%231a1a1a' stroke-width='.9'/%3E%3C/g%3E%3C/svg%3E") 11 11, e-resize;
 }
 .carousel__slide video { pointer-events: none; }   /* no browser video menus: a click just changes the slide */
 
