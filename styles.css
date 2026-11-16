@@ -304,20 +304,21 @@ img { display: block; max-width: 100%; }
    the picture. main.js sizes each slide and runs the slideshow.
    ========================================================= */
 .carousel {
-  /* Dissolve, gallery-style: the next picture slowly appears ON TOP of the
-     current one, which stays put underneath until it's covered. The page's
-     white never shows through between them, so nothing flashes. */
+  /* Crossfade: the next picture fades in on top while the current one fades
+     out just a quarter-second behind it. Short enough that two pictures are
+     never seen layered for long (no ghosting), and the old one trails just
+     enough that the white page doesn't flash through between them. */
   --ease: cubic-bezier(.37, 0, .63, 1);   /* gentle ease-in-out (sine) */
-  --fade-in: 2.4s;           /* next picture appears */
-  --fade-out: 1.2s;          /* previous one leaves, once it's covered */
-  --fade-out-delay: 2s;
+  --fade-in: 1s;             /* next picture appears */
+  --fade-out: 1s;            /* current one disappears… */
+  --fade-out-delay: .25s;    /* …starting a moment later */
   position: relative;
 }
 /* After a click or tap: sooner, still soft */
 .carousel.is-manual {
-  --fade-in: 1.2s;
+  --fade-in: .7s;
   --fade-out: .7s;
-  --fade-out-delay: 1s;
+  --fade-out-delay: .15s;
 }
 
 .carousel__stage {
@@ -392,8 +393,7 @@ img { display: block; max-width: 100%; }
   user-select: none;
   -webkit-user-select: none;
 }
-.carousel__num { transition: opacity .6s var(--ease); }
-.carousel__count.is-changing .carousel__num { opacity: 0; }
+
 
 /* Phones: no double-tap zoom delay, no grey tap flash — taps on a project change its slide */
 .project {

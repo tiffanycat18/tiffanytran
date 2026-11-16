@@ -67,8 +67,8 @@
     hold: 5500,         // how long a photo stays fully visible
     holdArrive: 8000,   // the picture showing when a project scrolls into view
                         // (a little longer, to read the title and text)
-    fadeAuto: 2400,     // automatic dissolve (matches --fade-in in styles.css)
-    fadeManual: 1200,   // dissolve after a click / tap (matches styles.css)
+    fadeAuto: 1000,     // automatic crossfade (matches --fade-in in styles.css)
+    fadeManual: 700,    // crossfade after a click / tap (matches styles.css)
     videoWait: 1500     // longest wait for a video's first frame before fading it in
   };
 
@@ -224,17 +224,8 @@
       schedule(false);
     }
 
-    // The counter number softly fades out, changes, and fades back in
-    var countTimer = null;
     function setCount(k) {
-      if (!numEl) return;
-      var count = numEl.parentNode;
-      clearTimeout(countTimer);
-      count.classList.add('is-changing');
-      countTimer = setTimeout(function () {
-        numEl.textContent = k;
-        count.classList.remove('is-changing');
-      }, 450);
+      if (numEl) numEl.textContent = k;
     }
 
     /* ---------- videos: silent, no controls, fade on when finished ---------- */
