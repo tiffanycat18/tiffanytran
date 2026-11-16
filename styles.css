@@ -313,7 +313,6 @@ img { display: block; max-width: 100%; }
   width: 100%;
   aspect-ratio: var(--hero-ratio);      /* before main.js measures the slides */
   max-height: var(--media-max-h);
-  cursor: pointer;
   touch-action: pan-y;                   /* vertical scroll stays native; swipes are ours */
   -webkit-tap-highlight-color: transparent;
   outline: none;
@@ -333,7 +332,7 @@ img { display: block; max-width: 100%; }
   opacity: 0;
   visibility: hidden;
   /* leaving: fade out, then hide */
-  transition: opacity .7s var(--ease), visibility 0s linear .7s;
+  transition: opacity 1s var(--ease), visibility 0s linear 1s;
 }
 .carousel__slide.is-active {
   z-index: 1;
@@ -341,11 +340,11 @@ img { display: block; max-width: 100%; }
   visibility: visible;
   /* arriving: start a beat later and fade in softly — the two pictures
      never sit on top of each other at half strength for long */
-  transition: opacity .9s var(--ease) .3s, visibility 0s;
+  transition: opacity 1.1s var(--ease) .4s, visibility 0s;
 }
-/* Clicks / swipes answer faster than the automatic slideshow */
-.carousel.is-manual .carousel__slide { transition: opacity .35s var(--ease), visibility 0s linear .35s; }
-.carousel.is-manual .carousel__slide.is-active { transition: opacity .45s var(--ease) .1s, visibility 0s; }
+/* Clicks / taps answer sooner than the automatic slideshow, still softly */
+.carousel.is-manual .carousel__slide { transition: opacity .5s var(--ease), visibility 0s linear .5s; }
+.carousel.is-manual .carousel__slide.is-active { transition: opacity .6s var(--ease) .1s, visibility 0s; }
 /* No fade on first paint */
 .carousel:not(.is-ready) .carousel__slide { transition: none; }
 
@@ -358,153 +357,34 @@ img { display: block; max-width: 100%; }
 }
 .carousel__stage > .placeholder { position: absolute; }
 
-/* ---- Counter "1/10" (also pauses / resumes the slideshow) ---- */
+/* ---- ← / → arrow cursor over the picture (desktop) ---- */
+.carousel__stage.is-prev .carousel__slide.is-active {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M25 16H7M14 9l-7 7 7 7' stroke='%23fff' stroke-width='4'/%3E%3Cpath d='M25 16H7M14 9l-7 7 7 7' stroke='%23111' stroke-width='1.5'/%3E%3C/g%3E%3C/svg%3E") 16 16, w-resize;
+}
+.carousel__stage.is-next .carousel__slide.is-active {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 16h18M18 9l7 7-7 7' stroke='%23fff' stroke-width='4'/%3E%3Cpath d='M7 16h18M18 9l7 7-7 7' stroke='%23111' stroke-width='1.5'/%3E%3C/g%3E%3C/svg%3E") 16 16, e-resize;
+}
+.carousel__slide video { pointer-events: none; }   /* no browser video menus: a click just changes the slide */
+
+/* ---- Counter "1/10" ---- */
 .carousel__count {
-  position: relative;
   flex: none;
   margin-top: var(--cap-gap-top);
-  padding: 2px 4px;
-  border: 0;
-  background: none;
   color: var(--ink);
   font-family: var(--caption-font);
   font-size: var(--fs-caption);
   letter-spacing: .06em;
   line-height: 1.3;
   font-variant-numeric: tabular-nums;
-  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
 }
-.carousel__count:focus-visible { outline: 1px solid var(--ink); outline-offset: 2px; }
-/* "Pause" / "Paused" / "Play" hint, to the right so "1/10" stays centred */
-.carousel__state {
-  position: absolute;
-  left: 100%;
-  top: 2px;
-  padding-left: .6em;
-  color: var(--muted);
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity .25s ease;
-}
-.carousel__count[data-paused="true"] .carousel__state { opacity: 1; }
-.carousel__count[data-paused="true"] .carousel__state::after { content: "Paused"; }
-@media (hover: hover) {
-  .carousel__count:hover .carousel__state { opacity: 1; }
-  .carousel__count[data-paused="false"]:hover .carousel__state::after { content: "Pause"; }
-  .carousel__count[data-paused="true"]:hover .carousel__state::after { content: "Play"; }
-}
-.carousel__count:focus-visible .carousel__state { opacity: 1; }
-.carousel__count[data-paused="false"]:focus-visible .carousel__state::after { content: "Pause"; }
 
-/* ---- "Next" hint that follows the mouse over the picture ---- */
-.carousel__hint {
-  position: absolute;
-  z-index: 5;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  font-family: var(--caption-font);
-  font-size: var(--fs-caption);
-  letter-spacing: .06em;
-  color: var(--ink);
-  background: rgba(255, 255, 255, .92);   /* readable on light and dark pictures */
-  padding: 3px 7px 2px;
-  border-radius: 2px;
-  opacity: 0;
-  transition: opacity .2s ease;
-  white-space: nowrap;
+/* Phones: no double-tap zoom delay, no grey tap flash — taps on a project change its slide */
+.project {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
-.carousel__hint.is-on { opacity: 1; }
-@media (hover: none) { .carousel__hint { display: none; } }
-
-/* ---- Video controls: play/pause, timeline, time, sound ---- */
-.vc {
-  position: absolute;
-  z-index: 3;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 26px 14px 10px;
-  background: linear-gradient(to top, rgba(0, 0, 0, .5), rgba(0, 0, 0, 0));
-  color: #fff;
-  font-family: var(--caption-font);
-  font-size: var(--fs-caption);
-  letter-spacing: .04em;
-  cursor: default;
-  opacity: 0;
-  transition: opacity .3s ease;
-}
-/* Shown while the pointer is on the video, while it's paused, or with the keyboard */
-@media (hover: hover) {
-  .carousel__slide--video:hover .vc { opacity: 1; }
-}
-.carousel__slide--video.is-paused .vc,
-.vc:focus-within { opacity: 1; }
-/* Touch screens have no hover: keep the controls visible */
-@media (hover: none) { .vc { opacity: 1; padding: 22px 10px 8px; gap: 10px; } }
-
-.vc__btn {
-  flex: none;
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  margin: -4px;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: inherit;
-  cursor: pointer;
-}
-.vc__btn svg { width: 14px; height: 14px; fill: currentColor; }
-.vc__btn:focus-visible,
-.vc__track:focus-visible { outline: 1px solid #fff; outline-offset: 2px; }
-.vc__btn .i-play,
-.vc__btn .i-sound { display: none; }
-.is-paused .vc__play .i-play { display: block; }
-.is-paused .vc__play .i-pause { display: none; }
-.is-sound .vc__mute .i-sound { display: block; }
-.is-sound .vc__mute .i-muted { display: none; }
-
-.vc__track {
-  position: relative;
-  flex: 1 1 auto;
-  height: 20px;           /* generous hit area around a thin line */
-  cursor: pointer;
-  touch-action: none;
-}
-.vc__track::before,
-.vc__fill {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  height: 2px;
-  margin-top: -1px;
-  border-radius: 2px;
-}
-.vc__track::before { right: 0; background: rgba(255, 255, 255, .35); }
-.vc__fill { width: 0; background: #fff; }
-.vc__knob {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 10px;
-  height: 10px;
-  margin: -5px 0 0 -5px;
-  border-radius: 50%;
-  background: #fff;
-  transform: scale(0);
-  transition: transform .15s ease;
-}
-.vc__track:hover .vc__knob,
-.vc__track:focus-visible .vc__knob,
-.vc__track.is-scrubbing .vc__knob { transform: scale(1); }
-@media (hover: none) { .vc__knob { transform: scale(1); } }
-.vc__time { flex: none; font-variant-numeric: tabular-nums; }
 
 /* Optional small label, centred under a project image:
    <p class="project__caption">…</p> inside the project's <figure>, after
@@ -741,7 +621,6 @@ img { display: block; max-width: 100%; }
   }
   .project__inner { width: 100%; }
   .project__media { width: 100%; }
-  .vc { font-size: 10px; }
   .project__caption { max-width: 240px; }
   :root { --fs-caption: 10px; --info-gap: 20px; --cap-gap-top: 10px; --cap-gap-bottom: 28px; --count-gap-bottom: 20px; }
   :root { --media-max-h: calc(var(--vh) * 55); }   /* tall images stop at 55% of the screen */
