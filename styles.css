@@ -103,6 +103,7 @@
   --info-gap: clamp(24px, calc(var(--vh) * 5.4), 58px);        /* image → project text (no label) */
   --cap-gap-top: clamp(10px, calc(var(--vh) * 1.6), 18px);     /* image → label */
   --cap-gap-bottom: clamp(28px, calc(var(--vh) * 5.2), 56px);  /* label → project text */
+  --count-gap-bottom: clamp(20px, calc(var(--vh) * 3.6), 40px); /* 1/10 → project text */
   --caption-font: Menlo, Lucida Console, monospace, sans-serif;   
 }
 
@@ -290,29 +291,224 @@ img { display: block; max-width: 100%; }
 .project__media {
   width: var(--hero-w);
   margin: 0 auto;
-  aspect-ratio: var(--hero-ratio);   /* grey placeholder box (938 × 608 at 1280) */
-}
-
-/* Real images keep their original shape — nothing is cropped.
-   They're as big as possible without going wider than the box above
-   or taller than it, so every project still fits on one screen. */
-.project__media:has(img) {
-  aspect-ratio: auto;
-  background: none;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-.project__media img {
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: var(--media-max-h);
+
+/* =========================================================
+   Project slideshow (carousel)
+   Every child of .carousel__stage is a slide. Slides keep their
+   original shape (never cropped) and sit centred on the bottom
+   edge of the stage, so the "1/10" counter is always right under
+   the picture. main.js sizes each slide and runs the slideshow.
+   ========================================================= */
+.carousel {
+  --ease: cubic-bezier(.45, 0, .55, 1);   /* soft ease-in-out */
+  position: relative;
 }
 
+.carousel__stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--hero-ratio);      /* before main.js measures the slides */
+  max-height: var(--media-max-h);
+  cursor: pointer;
+  touch-action: pan-y;                   /* vertical scroll stays native; swipes are ours */
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+.carousel__stage.is-sized { aspect-ratio: auto; }
+.carousel__stage:focus-visible { outline: 1px solid var(--ink); outline-offset: 6px; }
+
+.carousel__slide {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  transform: translateX(-50%);
+  object-fit: contain;
+  object-position: center bottom;
+  opacity: 0;
+  visibility: hidden;
+  /* leaving: fade out, then hide */
+  transition: opacity .7s var(--ease), visibility 0s linear .7s;
+}
+.carousel__slide.is-active {
+  z-index: 1;
+  opacity: 1;
+  visibility: visible;
+  /* arriving: start a beat later and fade in softly — the two pictures
+     never sit on top of each other at half strength for long */
+  transition: opacity .9s var(--ease) .3s, visibility 0s;
+}
+/* Clicks / swipes answer faster than the automatic slideshow */
+.carousel.is-manual .carousel__slide { transition: opacity .35s var(--ease), visibility 0s linear .35s; }
+.carousel.is-manual .carousel__slide.is-active { transition: opacity .45s var(--ease) .1s, visibility 0s; }
+/* No fade on first paint */
+.carousel:not(.is-ready) .carousel__slide { transition: none; }
+
+.carousel__slide img,
+.carousel__slide video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.carousel__stage > .placeholder { position: absolute; }
+
+/* ---- Counter "1/10" (also pauses / resumes the slideshow) ---- */
+.carousel__count {
+  position: relative;
+  flex: none;
+  margin-top: var(--cap-gap-top);
+  padding: 2px 4px;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font-family: var(--caption-font);
+  font-size: var(--fs-caption);
+  letter-spacing: .06em;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+.carousel__count:focus-visible { outline: 1px solid var(--ink); outline-offset: 2px; }
+/* "Pause" / "Paused" / "Play" hint, to the right so "1/10" stays centred */
+.carousel__state {
+  position: absolute;
+  left: 100%;
+  top: 2px;
+  padding-left: .6em;
+  color: var(--muted);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+.carousel__count[data-paused="true"] .carousel__state { opacity: 1; }
+.carousel__count[data-paused="true"] .carousel__state::after { content: "Paused"; }
+@media (hover: hover) {
+  .carousel__count:hover .carousel__state { opacity: 1; }
+  .carousel__count[data-paused="false"]:hover .carousel__state::after { content: "Pause"; }
+  .carousel__count[data-paused="true"]:hover .carousel__state::after { content: "Play"; }
+}
+.carousel__count:focus-visible .carousel__state { opacity: 1; }
+.carousel__count[data-paused="false"]:focus-visible .carousel__state::after { content: "Pause"; }
+
+/* ---- "Next" hint that follows the mouse over the picture ---- */
+.carousel__hint {
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  font-family: var(--caption-font);
+  font-size: var(--fs-caption);
+  letter-spacing: .06em;
+  color: var(--ink);
+  background: rgba(255, 255, 255, .92);   /* readable on light and dark pictures */
+  padding: 3px 7px 2px;
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity .2s ease;
+  white-space: nowrap;
+}
+.carousel__hint.is-on { opacity: 1; }
+@media (hover: none) { .carousel__hint { display: none; } }
+
+/* ---- Video controls: play/pause, timeline, time, sound ---- */
+.vc {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 26px 14px 10px;
+  background: linear-gradient(to top, rgba(0, 0, 0, .5), rgba(0, 0, 0, 0));
+  color: #fff;
+  font-family: var(--caption-font);
+  font-size: var(--fs-caption);
+  letter-spacing: .04em;
+  cursor: default;
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+/* Shown while the pointer is on the video, while it's paused, or with the keyboard */
+@media (hover: hover) {
+  .carousel__slide--video:hover .vc { opacity: 1; }
+}
+.carousel__slide--video.is-paused .vc,
+.vc:focus-within { opacity: 1; }
+/* Touch screens have no hover: keep the controls visible */
+@media (hover: none) { .vc { opacity: 1; padding: 22px 10px 8px; gap: 10px; } }
+
+.vc__btn {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin: -4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+.vc__btn svg { width: 14px; height: 14px; fill: currentColor; }
+.vc__btn:focus-visible,
+.vc__track:focus-visible { outline: 1px solid #fff; outline-offset: 2px; }
+.vc__btn .i-play,
+.vc__btn .i-sound { display: none; }
+.is-paused .vc__play .i-play { display: block; }
+.is-paused .vc__play .i-pause { display: none; }
+.is-sound .vc__mute .i-sound { display: block; }
+.is-sound .vc__mute .i-muted { display: none; }
+
+.vc__track {
+  position: relative;
+  flex: 1 1 auto;
+  height: 20px;           /* generous hit area around a thin line */
+  cursor: pointer;
+  touch-action: none;
+}
+.vc__track::before,
+.vc__fill {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: 2px;
+  margin-top: -1px;
+  border-radius: 2px;
+}
+.vc__track::before { right: 0; background: rgba(255, 255, 255, .35); }
+.vc__fill { width: 0; background: #fff; }
+.vc__knob {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  background: #fff;
+  transform: scale(0);
+  transition: transform .15s ease;
+}
+.vc__track:hover .vc__knob,
+.vc__track:focus-visible .vc__knob,
+.vc__track.is-scrubbing .vc__knob { transform: scale(1); }
+@media (hover: none) { .vc__knob { transform: scale(1); } }
+.vc__time { flex: none; font-variant-numeric: tabular-nums; }
+
 /* Optional small label, centred under a project image:
-   <p class="project__caption">…</p> inside the project's <figure>, after the <img>.
-   It sits close to the image (--cap-gap-top) with more room before the
+   <p class="project__caption">…</p> inside the project's <figure>, after
+   the stage. It sits under the counter, with more room before the
    project text (--cap-gap-bottom). */
 .project__caption {
   font-family: var(--caption-font);
@@ -322,13 +518,16 @@ img { display: block; max-width: 100%; }
   line-height: 1.3;
   text-align: center;
   max-width: 270px;
-  margin-top: var(--cap-gap-top);
+  margin-top: calc(var(--cap-gap-top) * .9);
 }
+/* counter → project text: a little more than image → counter */
+.project__media + .project__info { margin-top: var(--count-gap-bottom); }
 .project__media:has(.project__caption) + .project__info { margin-top: var(--cap-gap-bottom); }
-/* Make room for the label by shrinking the image only by what the label adds
-   (about 10%), so the project keeps the same overall height. */
-.project__media:has(.project__caption) img {
-  max-height: calc(var(--media-max-h) - (var(--cap-gap-top) + var(--cap-gap-bottom) + 3.9 * var(--fs-caption) - var(--info-gap)));
+
+@media (prefers-reduced-motion: reduce) {
+  .carousel .carousel__slide,
+  .carousel .carousel__slide.is-active { transition: opacity .2s linear, visibility 0s linear .2s; }
+  .carousel .carousel__slide.is-active { transition-delay: 0s; }
 }
 
 .project__info {
@@ -419,15 +618,13 @@ img { display: block; max-width: 100%; }
     flex: 1 1 auto;
     min-height: 0;
     width: 100%;
-    aspect-ratio: auto;            /* grey placeholders fill the space too */
   }
-  .project__media img {
-    max-width: 100%;
-    max-height: 100%;
+  /* the slideshow takes all the height the text leaves */
+  .carousel__stage {
+    flex: 1 1 auto;
     min-height: 0;
-  }
-  .project__media:has(.project__caption) img {
-    max-height: calc(100% - var(--cap-gap-top) - 3.9 * var(--fs-caption));
+    max-height: none;
+    aspect-ratio: auto;
   }
   .project__info { flex: none; }
 }
@@ -543,10 +740,10 @@ img { display: block; max-width: 100%; }
     padding: calc(var(--bar) + 24px) var(--edge) 56px;
   }
   .project__inner { width: 100%; }
-  .project__media { width: 100%; aspect-ratio: 1.75; }   /* placeholder box: 344 × 197 */
-  .project__media:has(img) { aspect-ratio: auto; }
+  .project__media { width: 100%; }
+  .vc { font-size: 10px; }
   .project__caption { max-width: 240px; }
-  :root { --fs-caption: 10px; --info-gap: 20px; --cap-gap-top: 10px; --cap-gap-bottom: 20px; }
+  :root { --fs-caption: 10px; --info-gap: 20px; --cap-gap-top: 10px; --cap-gap-bottom: 28px; --count-gap-bottom: 20px; }
   :root { --media-max-h: calc(var(--vh) * 55); }   /* tall images stop at 55% of the screen */
   .project__info {
     grid-template-columns: 44% 1fr;
