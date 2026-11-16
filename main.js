@@ -67,8 +67,9 @@
     hold: 5500,         // how long a photo stays fully visible
     holdArrive: 8000,   // the picture showing when a project scrolls into view
                         // (a little longer, to read the title and text)
-    fadeAuto: 1500,     // automatic crossfade (matches styles.css)
-    fadeManual: 700     // crossfade after a click / tap (matches styles.css)
+    fadeAuto: 2400,     // automatic dissolve (matches --fade-in in styles.css)
+    fadeManual: 1200,   // dissolve after a click / tap (matches styles.css)
+    videoWait: 1500     // longest wait for a video's first frame before fading it in
   };
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -142,8 +143,10 @@
       slides.forEach(function (s) {
         var r = ratioOf(s);
         var w = Math.min(W, h * r);
-        s.style.width = Math.round(w) + 'px';
+        w = Math.round(w);
+        s.style.width = w + 'px';
         s.style.height = Math.round(w / r) + 'px';
+        s.style.left = Math.round((W - w) / 2) + 'px';   // whole pixels: no shimmer while fading
       });
     }
 
@@ -166,23 +169,52 @@
       timer = setTimeout(function () { go(index + 1, false); }, wait);
     }
 
+    var goToken = 0;
+
     function go(to, manual) {
       if (n < 2) return;
       to = (to + n) % n;
       if (to === index) return;
-      var pv = videoOf(current());
-      if (pv) pv.pause();
+      var token = ++goToken;
+      clearTimeout(timer);
+
+      // A video fades in only once its first frame is ready, so it never
+      // appears as an empty box. Start it now (still hidden) and wait.
+      var v = videoOf(slides[to]);
+      if (v && !v._broken && v.readyState < 2) {
+        var done = false;
+        var proceed = function () {
+          if (done || token !== goToken) return;
+          done = true;
+          show(to, manual);
+        };
+        v.preload = 'auto';
+        try { v.currentTime = 0; } catch (e) {}
+        playVideo(v);
+        v.addEventListener('loadeddata', proceed, { once: true });
+        setTimeout(proceed, TIMING.videoWait);
+        return;
+      }
+      show(to, manual);
+    }
+
+    function show(to, manual) {
+      var prev = current();
+      var pv = videoOf(prev);
+      if (pv) pv.pause();   // keeps its last frame while the next picture dissolves over it
 
       fig.classList.toggle('is-manual', !!manual);
-      current().classList.remove('is-active');
+      slides.forEach(function (s) { s.classList.remove('is-leaving'); });
+      prev.classList.add('is-leaving');
+      prev.classList.remove('is-active');
       index = to;
       current().classList.add('is-active');
-      if (numEl) numEl.textContent = index + 1;
+      setCount(index + 1);
 
       var v = videoOf(current());
       if (v) {
         v._blocked = false;
-        try { v.currentTime = 0; } catch (e) {}
+        if (v.currentTime > 0.3) { try { v.currentTime = 0; } catch (e) {} }
         playVideo(v);
       }
       // warm up the next video so it starts instantly
@@ -190,6 +222,19 @@
       if (nv && nv.preload !== 'auto') nv.preload = 'auto';
 
       schedule(false);
+    }
+
+    // The counter number softly fades out, changes, and fades back in
+    var countTimer = null;
+    function setCount(k) {
+      if (!numEl) return;
+      var count = numEl.parentNode;
+      clearTimeout(countTimer);
+      count.classList.add('is-changing');
+      countTimer = setTimeout(function () {
+        numEl.textContent = k;
+        count.classList.remove('is-changing');
+      }, 450);
     }
 
     /* ---------- videos: silent, no controls, fade on when finished ---------- */

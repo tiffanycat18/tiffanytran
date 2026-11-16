@@ -50,12 +50,12 @@ On every size, each project fills one screen. ABOUT, INDEX and the © line stay 
 ## How the slideshows behave
 
 - Each project plays as a slow, looping slideshow, but only while it's on screen. After the last slide it goes back to the first, until the visitor scrolls to the next project.
-- **Desktop:** over the picture the cursor becomes a small, thin arrow, ← on the left half and → on the right half. Click to go back or forward. The arrow keys work too.
+- **Desktop:** over the picture the cursor becomes a small hairline arrow, ← on the left half and → on the right half. Click to go back or forward. The arrow keys work too.
 - **Phones:** tap the left half of the picture to go back, the right half for the next one. A tap anywhere else on that project's screen also shows the next one. Swiping left and right works too.
 - **Videos** play silently with no controls, and fade into the next slide when they finish. Clicking or tapping a video changes the slide like a photo.
-- **Crossfade:** the old picture fades out and the new one fades in a beat later (1.5s in all), so they never sit on top of each other as a muddy double image. After a click or tap it's quicker (about 0.7s) so it feels responsive.
+- **Dissolve:** the next picture slowly appears *on top of* the current one over 2.4s, and the current one only fades away once it's covered. The white page never shows through between two pictures, so there's no flash. After a click or tap the dissolve takes 1.2s. A video only starts dissolving in once its first frame is ready, so it never appears as an empty box. The `1/10` number softly fades as it changes.
 - **Timing** (set at the top of the slideshow code in `main.js`, `TIMING`):
-  - Each photo stays fully visible for **5.5s** (about 7s per slide including the fade). Five seconds is the length people already know from Instagram Stories and most slideshow defaults; the extra half-second gives time for the caption.
+  - Each photo stays fully visible for **5.5s** (about 8s per slide including the dissolve). Five seconds is the length people already know from Instagram Stories and most slideshow defaults; the extra half-second gives time for the caption.
   - The picture showing when a project scrolls into view stays **8s**, so there's time to read the title and description first.
   - A video stays for as long as it runs.
 - It stops when the browser tab is hidden.

@@ -304,8 +304,20 @@ img { display: block; max-width: 100%; }
    the picture. main.js sizes each slide and runs the slideshow.
    ========================================================= */
 .carousel {
-  --ease: cubic-bezier(.45, 0, .55, 1);   /* soft ease-in-out */
+  /* Dissolve, gallery-style: the next picture slowly appears ON TOP of the
+     current one, which stays put underneath until it's covered. The page's
+     white never shows through between them, so nothing flashes. */
+  --ease: cubic-bezier(.37, 0, .63, 1);   /* gentle ease-in-out (sine) */
+  --fade-in: 2.4s;           /* next picture appears */
+  --fade-out: 1.2s;          /* previous one leaves, once it's covered */
+  --fade-out-delay: 2s;
   position: relative;
+}
+/* After a click or tap: sooner, still soft */
+.carousel.is-manual {
+  --fade-in: 1.2s;
+  --fade-out: .7s;
+  --fade-out-delay: 1s;
 }
 
 .carousel__stage {
@@ -319,31 +331,33 @@ img { display: block; max-width: 100%; }
 }
 .carousel__stage.is-sized { aspect-ratio: auto; }
 
+/* main.js gives each slide its size and a whole-pixel left position,
+   so pictures never shift or re-sharpen at the end of a fade */
 .carousel__slide {
   position: absolute;
-  left: 50%;
+  left: 0;
   bottom: 0;
   width: 100%;
   height: 100%;
-  transform: translateX(-50%);
   object-fit: contain;
   object-position: center bottom;
   opacity: 0;
   visibility: hidden;
-  /* leaving: fade out, then hide */
-  transition: opacity 1s var(--ease), visibility 0s linear 1s;
+  z-index: 0;
+  /* leaving: wait until the next picture has covered it, then fade away */
+  transition:
+    opacity var(--fade-out) var(--ease) var(--fade-out-delay),
+    visibility 0s linear calc(var(--fade-out-delay) + var(--fade-out));
 }
+.carousel__slide.is-leaving { z-index: 1; }
 .carousel__slide.is-active {
-  z-index: 1;
+  z-index: 2;
   opacity: 1;
   visibility: visible;
-  /* arriving: start a beat later and fade in softly — the two pictures
-     never sit on top of each other at half strength for long */
-  transition: opacity 1.1s var(--ease) .4s, visibility 0s;
+  transition: opacity var(--fade-in) var(--ease), visibility 0s;
 }
-/* Clicks / taps answer sooner than the automatic slideshow, still softly */
-.carousel.is-manual .carousel__slide { transition: opacity .5s var(--ease), visibility 0s linear .5s; }
-.carousel.is-manual .carousel__slide.is-active { transition: opacity .6s var(--ease) .1s, visibility 0s; }
+.carousel__slide.is-active,
+.carousel__slide.is-leaving { will-change: opacity; }
 /* No fade on first paint */
 .carousel:not(.is-ready) .carousel__slide { transition: none; }
 
@@ -358,10 +372,10 @@ img { display: block; max-width: 100%; }
 
 /* ---- ← / → arrow cursor over the picture (desktop): small hairline arrows ---- */
 .carousel__stage.is-prev .carousel__slide.is-active {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M17.5 11H4.5M8.5 7L4.5 11L8.5 15' stroke='%23fff' stroke-opacity='.5' stroke-width='2.2'/%3E%3Cpath d='M17.5 11H4.5M8.5 7L4.5 11L8.5 15' stroke='%231a1a1a' stroke-width='.9'/%3E%3C/g%3E%3C/svg%3E") 11 11, w-resize;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 18 18'%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M13 9H5M7.6 7.1L5 9L7.6 10.9' stroke='%23fff' stroke-opacity='.45' stroke-width='1.8'/%3E%3Cpath d='M13 9H5M7.6 7.1L5 9L7.6 10.9' stroke='%23111' stroke-width='.75'/%3E%3C/g%3E%3C/svg%3E") 9 9, w-resize;
 }
 .carousel__stage.is-next .carousel__slide.is-active {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 11H17.5M13.5 7L17.5 11L13.5 15' stroke='%23fff' stroke-opacity='.5' stroke-width='2.2'/%3E%3Cpath d='M4.5 11H17.5M13.5 7L17.5 11L13.5 15' stroke='%231a1a1a' stroke-width='.9'/%3E%3C/g%3E%3C/svg%3E") 11 11, e-resize;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 18 18'%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 9H13M10.4 7.1L13 9L10.4 10.9' stroke='%23fff' stroke-opacity='.45' stroke-width='1.8'/%3E%3Cpath d='M5 9H13M10.4 7.1L13 9L10.4 10.9' stroke='%23111' stroke-width='.75'/%3E%3C/g%3E%3C/svg%3E") 9 9, e-resize;
 }
 .carousel__slide video { pointer-events: none; }   /* no browser video menus: a click just changes the slide */
 
@@ -378,6 +392,8 @@ img { display: block; max-width: 100%; }
   user-select: none;
   -webkit-user-select: none;
 }
+.carousel__num { transition: opacity .6s var(--ease); }
+.carousel__count.is-changing .carousel__num { opacity: 0; }
 
 /* Phones: no double-tap zoom delay, no grey tap flash — taps on a project change its slide */
 .project {
@@ -404,9 +420,8 @@ img { display: block; max-width: 100%; }
 .project__media:has(.project__caption) + .project__info { margin-top: var(--cap-gap-bottom); }
 
 @media (prefers-reduced-motion: reduce) {
-  .carousel .carousel__slide,
-  .carousel .carousel__slide.is-active { transition: opacity .2s linear, visibility 0s linear .2s; }
-  .carousel .carousel__slide.is-active { transition-delay: 0s; }
+  .carousel,
+  .carousel.is-manual { --fade-in: .4s; --fade-out: .2s; --fade-out-delay: .4s; }
 }
 
 .project__info {
