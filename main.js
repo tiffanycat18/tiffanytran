@@ -64,9 +64,9 @@
 
   // Timing (milliseconds). See README for the reasoning.
   var TIMING = {
-    hold: 5500,         // how long a photo stays fully visible
-    holdArrive: 8000,   // the picture showing when a project scrolls into view
-                        // (a little longer, to read the title and text)
+    hold: 4000,         // how long a photo stays fully visible (~5s per slide with the fade)
+    holdArrive: 5000,   // the picture showing when a project scrolls into view
+                        // (a little longer, to start reading the title and text)
     fadeAuto: 1000,     // automatic crossfade (matches --fade-in in styles.css)
     fadeManual: 700,    // crossfade after a click / tap (matches styles.css)
     videoWait: 1500     // longest wait for a video's first frame before fading it in

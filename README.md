@@ -55,8 +55,8 @@ On every size, each project fills one screen. ABOUT, INDEX and the © line stay 
 - **Videos** play silently with no controls, and fade into the next slide when they finish. Clicking or tapping a video changes the slide like a photo.
 - **Fade:** a simple crossfade of about 1 second. The next picture fades in while the current one fades out a quarter-second behind it, so the white page doesn't flash through and the two pictures are never seen layered for long. After a click or tap it takes about 0.7s. A video only starts fading in once its first frame is ready, so it never appears as an empty box.
 - **Timing** (set at the top of the slideshow code in `main.js`, `TIMING`):
-  - Each photo stays fully visible for **5.5s** (about 6.5s per slide including the fade). Five seconds is the length people already know from Instagram Stories and most slideshow defaults; the extra half-second gives time for the caption.
-  - The picture showing when a project scrolls into view stays **8s**, so there's time to read the title and description first.
+  - Each photo stays fully visible for **4s**, about **5s per slide** including the fade. That's the rhythm people already know from Instagram Stories and most slideshows, quick enough that visitors notice it moves on by itself.
+  - The picture showing when a project scrolls into view stays **5s**, a moment longer to start reading the title and description.
   - A video stays for as long as it runs.
 - It stops when the browser tab is hidden.
 - **Reduced motion:** if a visitor's device is set to reduce motion, the slideshow doesn't advance on its own; they click or tap through it instead.
